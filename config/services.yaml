@@ -29,4 +29,5 @@ services:
         class: App\Security\MyEntityUserProvider
         arguments:
             - '@doctrine'
-            - {facebook: facebook}
+            - 'App\Entity\User'
+            - {facebook: facebookID}
