@@ -2,12 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface
 {
@@ -27,6 +26,12 @@ class User implements UserInterface
      * @ORM\Column(type="json")
      */
     private $roles = [];
+
+    /**
+     * @var string The hashed password
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $password;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -87,8 +92,15 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getPassword(): self
+    public function getPassword(): string
     {
+        return (string) $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
         return $this;
     }
 
