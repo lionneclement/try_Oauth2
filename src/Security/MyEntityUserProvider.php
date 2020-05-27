@@ -10,7 +10,6 @@ class MyEntityUserProvider extends EntityUserProvider {
 
     public function loadUserByOAuthUserResponse(UserResponseInterface $response)
     {   
-        dd($response);
         $resourceOwnerName = $response->getResourceOwner()->getName();
 
         if (!isset($this->properties[$resourceOwnerName])) {
@@ -23,16 +22,20 @@ class MyEntityUserProvider extends EntityUserProvider {
 
         // unique integer
         $username = $response->getUsername();
-        if (null === $user = $this->findUser([$this->properties[$resourceOwnerName] => $username])) {
-            $user = new User();
+
+        $user = $this->findUser(['email' => $response->getEmail()]);
+        
+        if (null === $this->findUser([$this->properties[$resourceOwnerName] => $username])) {
+            if (null === $user) {
+                $user = new User();
+            }
+            $user->setLastName($response->getLastname());
+            $user->setFirstName($response->getFirstname());
+            $user->setEmail($response->getEmail());
 
             $user->$setterId($username);
             $user->$setterAccessToken($response->getAccessToken());
-
-            $user->setLastName($response->getLastname());
-            $user->setFirstName($response->getFirstname());
         }
-        $user->setEmail($response->getEmail());
         
         $this->em->persist($user);
         $this->em->flush();
